@@ -6,6 +6,13 @@
 
 - `extensions/keep-model-on-new/`：`/new` 沿用目前模型，不修改 default model；不影響 `/resume`。支援空白及 ephemeral sessions。模型無法使用時會顯示警告。
 
+## 相關專案
+
+以下專案保持獨立維護；此處僅提供連結，不複製程式碼或使用 submodule。
+
+- [pi-herdr-subagents](https://github.com/andrewfung729/pi-herdr-subagents)：在 herdr panes 執行非同步 Pi subagents 的獨立套件；需求與使用方式見其 README。
+- [pi-learn](https://github.com/andrewfung729/pi-learn)：學習專用的 `.pi` 工作區，包含教學 skills、quiz 與視覺工具；依其 README 安裝至學習專案，不作為一般全域設定載入。
+
 ## 使用
 
 已具備此 private repo 的 GitHub 存取權限時，可 clone 後以本機路徑載入：
