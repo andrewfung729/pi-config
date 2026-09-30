@@ -4,7 +4,7 @@
 
 ## Extensions
 
-- `extensions/keep-model-on-new/`：`/new` 沿用目前模型，不修改 default model；不影響 `/resume`。支援空白及 ephemeral sessions。模型無法使用時會顯示警告。
+- `extensions/keep-model-on-new/`：`/new` 沿用目前模型與 thinking level，不修改 default model / default thinking；不影響 `/resume`。支援空白及 ephemeral sessions。模型無法使用時會顯示警告。
 
 ## 相關專案
 
@@ -36,7 +36,7 @@ pi install ./pi-config
 PI_OFFLINE=1 node extensions/keep-model-on-new/test.mjs /absolute/path/to/pi-coding-agent/dist/index.js
 ```
 
-測試涵蓋啟動預設值、連續 `/new`、清空對話、空白與 ephemeral sessions、`/resume`，以及預設設定保持不變。
+測試涵蓋啟動預設值、連續 `/new`（模型與 thinking level）、清空對話、空白與 ephemeral sessions、`/resume`，以及預設設定保持不變。
 
 ## 安全
 

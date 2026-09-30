@@ -1,10 +1,13 @@
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 
+type ThinkingLevel = ReturnType<ExtensionAPI["getThinkingLevel"]>;
+
 declare global {
   var __piKeepModelOnNew: {
     targetSessionFile: string | undefined;
     provider: string;
     modelId: string;
+    thinkingLevel: ThinkingLevel;
   } | undefined;
 }
 
@@ -17,6 +20,7 @@ export default function (pi: ExtensionAPI) {
       targetSessionFile: event.targetSessionFile,
       provider: ctx.model.provider,
       modelId: ctx.model.id,
+      thinkingLevel: ctx.thinkingLevel ?? pi.getThinkingLevel(),
     };
   });
 
@@ -32,6 +36,10 @@ export default function (pi: ExtensionAPI) {
         `Could not keep ${previous.provider}/${previous.modelId}; using the new session's model. Check /model and /login.`,
         "warning",
       );
+      return;
     }
+
+    // setModel may reset thinking to settings/default; restore the prior session level.
+    pi.setThinkingLevel(previous.thinkingLevel);
   });
 }

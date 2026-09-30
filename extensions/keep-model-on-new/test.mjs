@@ -22,6 +22,7 @@ try {
   const settingsManager = sdk.SettingsManager.inMemory({
     defaultProvider: defaultModel.provider,
     defaultModel: defaultModel.id,
+    defaultThinkingLevel: "off",
   });
   const errors = [];
   const createRuntime = async ({ sessionManager, sessionStartEvent }) => {
@@ -61,7 +62,10 @@ try {
     runtime.setRebindSession(bind);
     await bind(runtime.session);
     assert.equal(runtime.session.model.id, defaultModel.id, "startup keeps default");
+    assert.equal(runtime.session.thinkingLevel, "off", "startup keeps default thinking");
     await runtime.session.setModel(selectedModel);
+    runtime.session.setThinkingLevel("high");
+    assert.equal(runtime.session.thinkingLevel, "high");
 
     const sm = runtime.session.sessionManager;
     sm.appendMessage({ role: "user", content: "Previous conversation", timestamp: Date.now() });
@@ -74,21 +78,25 @@ try {
     for (let i = 0; i < 2; i++) {
       assert.equal((await runtime.newSession()).cancelled, false);
       assert.equal(runtime.session.model.id, selectedModel.id, "/new keeps selected model");
+      assert.equal(runtime.session.thinkingLevel, "high", "/new keeps selected thinking level");
       assert.equal(runtime.session.messages.length, 0, "/new clears conversation");
       assert.equal(globalThis.__piKeepModelOnNew, undefined, "handoff consumed");
     }
     if (savedSession) {
       await runtime.session.setModel(defaultModel);
+      runtime.session.setThinkingLevel("off");
       await runtime.switchSession(savedSession);
       assert.equal(runtime.session.model.id, selectedModel.id, "/resume restores saved model");
+      assert.equal(runtime.session.thinkingLevel, "high", "/resume restores saved thinking");
     }
     assert.equal(settingsManager.getDefaultModel(), defaultModel.id);
     assert.equal(settingsManager.getDefaultProvider(), defaultModel.provider);
+    assert.equal(settingsManager.getDefaultThinkingLevel(), "off");
     runtime.session.dispose();
     runtime = undefined;
   }
   assert.deepEqual(errors, []);
-  console.log("PASS: startup, repeated /new, empty and ephemeral sessions, /resume, unchanged defaults");
+  console.log("PASS: startup, repeated /new (model+thinking), empty and ephemeral sessions, /resume, unchanged defaults");
 } finally {
   runtime?.session.dispose();
   await rm(directory, { recursive: true, force: true });
